@@ -13,3 +13,11 @@ export const ENV = {
         process.env.BETTER_AUTH_URL ||
         `http://localhost:${process.env.PORT || 3000}/api/auth`,
 };
+
+const required = ["DATABASE_URL", "BETTER_AUTH_SECRET"] as const;
+
+for (const key of required) {
+    if (!ENV[key]) {
+        throw new Error(`❌ Missing required environment variable: ${key}`);
+    }
+}
