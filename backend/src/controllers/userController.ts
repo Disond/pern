@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import * as queries from "../db/queries";
+// asdasd
 
 const getUserId = (req: Request): string | null => {
     return (req as any).user?.id || null;
