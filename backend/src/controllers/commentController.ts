@@ -1,7 +1,6 @@
 import type { Request, Response } from "express";
 import * as queries from "../db/queries";
-//asdasdas
-
+//@coderabbitai please review this specific change in the context of the previous commit.
 export const createComment = async (req: Request, res: Response) => {
     try {
         const userId = req.user?.id;

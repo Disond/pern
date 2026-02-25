@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import * as queries from "../db/queries";
-//asdasds
+//@coderabbitai please review this specific change in the context of the previous commit.
 
 export const getAllProducts = async (req: Request, res: Response) => {
     try {

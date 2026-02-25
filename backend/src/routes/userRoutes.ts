@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { syncUser, getMe, updateMe } from "../controllers/userController";
-//sadasdsasa
+//@coderabbitai please review this specific change in the context of the previous commit.
 const router = Router();
 
 router.get("/me", getMe);

@@ -2,7 +2,7 @@ import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import * as schema from "./schema";
 import { ENV } from "../config/env";
-// asdasd
+// @coderabbitai please review this specific change in the context of the previous commit.
 
 if (!ENV.DATABASE_URL) {
     throw new Error("DATABASE_URL is not defined in environment variables");
