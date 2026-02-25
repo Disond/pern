@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import * as queries from "../db/queries";
-// asdasd
+// @coderabbitai please review this specific change in the context of the previous commit.
 
 const getUserId = (req: Request): string | null => {
     return (req as any).user?.id || null;

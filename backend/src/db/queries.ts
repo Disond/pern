@@ -8,7 +8,7 @@ import {
     type newComment,
     type newProduct,
 } from "./schema";
-// asdasd
+// @coderabbitai please review this specific change in the context of the previous commit.
 
 type UserUpdateInput = Partial<Pick<newUser, "email" | "name" | "imageUrl">>;
 type ProductUpdateInput = Partial<

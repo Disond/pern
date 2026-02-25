@@ -1,7 +1,7 @@
 import { Router } from "express";
 import * as productController from "../controllers/productController";
 import { requireAuth } from "../middleware/auth";
-// asdasdas
+// @coderabbitai please review this specific change in the context of the previous commit.
 
 const router = Router();
 

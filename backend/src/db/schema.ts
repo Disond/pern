@@ -1,6 +1,6 @@
 import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-//asdasd
+//@coderabbitai please review this specific change in the context of the previous commit.
 
 export const users = pgTable("users", {
     id: text("id").primaryKey(),
