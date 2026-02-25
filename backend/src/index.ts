@@ -18,25 +18,20 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Better Auth rute - MORAJU BITI PRE ostalih ruta
 app.use("/api/auth", auth.handler);
 
-// Rute
 app.use(routes);
 
-// Health check
 app.get("/api/health", (req, res) => {
     res.json({
         message:
             "Welcome to API - Powered by PostgreSQL, Drizzle ORM & Better Auth",
         endpoints: {
             auth: "/api/auth",
-            // Dodajte ostale rute kasnije
         },
     });
 });
 
-// Production - serve frontend
 if (ENV.NODE_ENV === "production") {
     const __dirname = path.resolve();
     app.use(express.static(path.join(__dirname, "../frontend/dist")));
