@@ -8,7 +8,12 @@ import {
     type newComment,
     type newProduct,
 } from "./schema";
-import { get } from "node:http";
+
+type UserUpdateInput = Partial<Pick<newUser, "email" | "name" | "imageUrl">>;
+type ProductUpdateInput = Partial<
+    Pick<newProduct, "title" | "description" | "imageUrl">
+>;
+type CommentUpdateInput = Partial<Pick<newComment, "content">>;
 
 // USER QUERIES
 export const createUser = async (data: newUser) => {
@@ -22,7 +27,7 @@ export const getUserById = async (id: string) => {
     });
 };
 
-export const updateUser = async (id: string, data: Partial<newUser>) => {
+export const updateUser = async (id: string, data: UserUpdateInput) => {
     const [user] = await db
         .update(users)
         .set(data)
@@ -32,12 +37,21 @@ export const updateUser = async (id: string, data: Partial<newUser>) => {
 };
 
 // upsert => create or update - ako postoji, updateuj, ako ne postoji, kreiraj
-export const upserUser = async (data: newUser) => {
-    const existingUser = await getUserById(data.id);
-    if (existingUser) {
-        return updateUser(data.id, data);
-    }
-    return createUser(data);
+export const upsertUser = async (data: newUser) => {
+    const [user] = await db
+        .insert(users)
+        .values(data)
+        .onConflictDoUpdate({
+            target: users.id,
+            set: {
+                email: data.email,
+                name: data.name,
+                imageUrl: data.imageUrl,
+                updatedAt: new Date(),
+            },
+        })
+        .returning();
+    return user;
 };
 
 // PRODUCTS QUERIES
@@ -56,8 +70,14 @@ export const getAllProducts = async () => {
 export const getProductById = async (id: string) => {
     return db.query.products.findFirst({
         where: eq(products.id, id),
-        with: { user: true },
-        orderBy: (comments, { desc }) => [desc(comments.createdAt)],
+        // with: { user: true },
+        with: {
+            user: true,
+            comments: {
+                with: { user: true },
+                orderBy: (comments, { desc }) => [desc(comments.createdAt)],
+            },
+        },
     });
 };
 
@@ -69,17 +89,29 @@ export const getProductsByUserId = async (userId: string) => {
     });
 };
 
-export const updateProduct = async (id: string, data: Partial<newProduct>) => {
+export const updateProduct = async (id: string, data: ProductUpdateInput) => {
     const [product] = await db
         .update(products)
         .set(data)
         .where(eq(products.id, id))
         .returning();
+
+    if (!product) {
+        throw new Error("Product not found");
+    }
     return product;
 };
 
 export const deleteProduct = async (id: string) => {
-    await db.delete(products).where(eq(products.id, id));
+    const [product] = await db
+        .delete(products)
+        .where(eq(products.id, id))
+        .returning();
+
+    if (!product) {
+        throw new Error(`Product with id ${id} not found`);
+    }
+    return product;
 };
 
 // COMMENT QUERIES
@@ -93,12 +125,26 @@ export const deleteComment = async (id: string) => {
         .delete(comments)
         .where(eq(comments.id, id))
         .returning();
+
+    if (!comment) {
+        throw new Error(`Comment with id ${id} not found`);
+    }
     return comment;
 };
 
 export const getCommentById = async (id: string) => {
     return db.query.comments.findFirst({
         where: eq(comments.id, id),
-        with: { user: true },
+        with: { user: true, product: true },
     });
+};
+
+// Dodato kao predlog od Kimi
+export const updateComment = async (id: string, data: CommentUpdateInput) => {
+    const [comment] = await db
+        .update(comments)
+        .set(data)
+        .where(eq(comments.id, id))
+        .returning();
+    return comment;
 };
