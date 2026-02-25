@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { auth } from "../auth";
+// asdadas
 
 export const requireAuth = async (
     req: Request,

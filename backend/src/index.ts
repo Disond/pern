@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import path from "path";
 import { toNodeHandler } from "better-auth/node";
+// asdasd
 
 import { ENV } from "./config/env";
 import { auth } from "./auth";

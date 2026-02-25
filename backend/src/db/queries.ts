@@ -8,6 +8,7 @@ import {
     type newComment,
     type newProduct,
 } from "./schema";
+// asdasd
 
 type UserUpdateInput = Partial<Pick<newUser, "email" | "name" | "imageUrl">>;
 type ProductUpdateInput = Partial<
