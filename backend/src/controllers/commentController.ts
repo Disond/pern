@@ -1,6 +1,5 @@
 import type { Request, Response } from "express";
 import * as queries from "../db/queries";
-// import {getAuth} from "@clerk/express"
 
 export const createComment = async (req: Request, res: Response) => {
     try {
