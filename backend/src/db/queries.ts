@@ -40,7 +40,7 @@ export const updateUser = async (id: string, data: UserUpdateInput) => {
     return user;
 };
 
-// upsert => create or update - ako postoji, updateuj, ako ne postoji, kreiraj
+// Insert a new user or update an existing one on primary key conflict
 export const upsertUser = async (data: newUser) => {
     const [user] = await db
         .insert(users)
@@ -100,7 +100,7 @@ export const updateProduct = async (id: string, data: ProductUpdateInput) => {
         .returning();
 
     if (!product) {
-        throw new Error("Product not found");
+        throw new Error(`Product with id ${id} not found`);
     }
     return product;
 };
