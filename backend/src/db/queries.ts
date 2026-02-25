@@ -33,6 +33,10 @@ export const updateUser = async (id: string, data: UserUpdateInput) => {
         .set(data)
         .where(eq(users.id, id))
         .returning();
+
+    if (!user) {
+        throw new Error(`User with id ${id} not found`);
+    }
     return user;
 };
 
@@ -70,7 +74,6 @@ export const getAllProducts = async () => {
 export const getProductById = async (id: string) => {
     return db.query.products.findFirst({
         where: eq(products.id, id),
-        // with: { user: true },
         with: {
             user: true,
             comments: {
@@ -139,12 +142,15 @@ export const getCommentById = async (id: string) => {
     });
 };
 
-// Dodato kao predlog od Kimi
 export const updateComment = async (id: string, data: CommentUpdateInput) => {
     const [comment] = await db
         .update(comments)
         .set(data)
         .where(eq(comments.id, id))
         .returning();
+
+    if (!comment) {
+        throw new Error(`Comment with id ${id} not found`);
+    }
     return comment;
 };
