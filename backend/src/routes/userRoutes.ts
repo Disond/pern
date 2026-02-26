@@ -1,10 +1,11 @@
 import { Router } from "express";
 import { syncUser, getMe, updateMe } from "../controllers/userController";
-//@coderabbitai please review this specific change in the context of the previous commit.
+import { requireAuth } from "../middleware/auth";
+
 const router = Router();
 
-router.get("/me", getMe);
-router.put("/me", updateMe);
-router.post("/sync", syncUser);
+router.get("/me", requireAuth, getMe);
+router.put("/me", requireAuth, updateMe);
+router.post("/sync", requireAuth, syncUser);
 
 export default router;

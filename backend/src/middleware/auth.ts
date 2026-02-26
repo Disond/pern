@@ -1,26 +1,25 @@
 import type { Request, Response, NextFunction } from "express";
 import { auth } from "../auth";
-// @coderabbitai please review this specific change in the context of the previous commit.
+import { fromNodeHeaders } from "better-auth/node";
 
 export const requireAuth = async (
     req: Request,
     res: Response,
     next: NextFunction,
-) => {
+): Promise<void> => {
     try {
         const session = await auth.api.getSession({
-            headers: new Headers(
-                Object.entries(req.headers).map(([k, v]) => [k, String(v)]),
-            ),
+            headers: fromNodeHeaders(req.headers),
         });
 
         if (!session) {
-            return res.status(401).json({ error: "Unauthorized" });
+            res.status(401).json({ error: "Unauthorized" });
+            return;
         }
 
         req.user = session.user;
         next();
     } catch (error) {
-        return res.status(401).json({ error: "Invalid session" });
+        res.status(401).json({ error: "Invalid session" });
     }
 };

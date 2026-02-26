@@ -1,9 +1,15 @@
 import { Request, Response } from "express";
 import * as queries from "../db/queries";
-// @coderabbitai please review this specific change in the context of the previous commit.
+import { z } from "zod";
 
-const getUserId = (req: Request): string | null => {
-    return (req as any).user?.id || null;
+const syncUserSchema = z.object({
+    email: z.string().email({ message: "Invalid email address" }),
+    name: z.string().min(1, { message: "Name is required" }),
+    imageUrl: z.string().url({ message: "Invalid URL" }).optional(),
+});
+
+const getUserId = (req: Request): string | undefined => {
+    return req.user?.id;
 };
 
 // GET /api/users/me
@@ -24,6 +30,10 @@ export async function getMe(req: Request, res: Response) {
 
 // POST /api/users/sync - sync user posle login-a
 export async function syncUser(req: Request, res: Response) {
+    const parsed = syncUserSchema.safeParse(req.body);
+    if (!parsed.success) {
+        return res.status(400).json({ error: parsed.error.flatten() });
+    }
     try {
         const userId = getUserId(req);
         if (!userId) return res.status(401).json({ error: "Unauthorized" });

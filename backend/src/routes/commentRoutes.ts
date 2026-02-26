@@ -1,10 +1,10 @@
 import { Router } from "express";
 import { requireAuth } from "../middleware/auth";
 import * as commentController from "../controllers/commentController";
-//@coderabbitai please review this specific change in the context of the previous commit.
 
 const router = Router();
 
+router.get("/product/:productId", commentController.getCommentsByProductId);
 router.post("/", requireAuth, commentController.createComment);
 router.delete("/:id", requireAuth, commentController.deleteComment);
 

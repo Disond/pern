@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import * as queries from "../db/queries";
-//@coderabbitai please review this specific change in the context of the previous commit.
+
 export const createComment = async (req: Request, res: Response) => {
     try {
         const userId = req.user?.id;
@@ -50,5 +50,22 @@ export const deleteComment = async (req: Request, res: Response) => {
     } catch (error) {
         console.error("Error deleting comment:", error);
         res.status(500).json({ error: "Failed to delete comment" });
+    }
+};
+
+export const getCommentsByProductId = async (req: Request, res: Response) => {
+    try {
+        const productId = req.params.productId as string;
+
+        const product = await queries.getProductById(productId);
+        if (!product) {
+            return res.status(404).json({ error: "Product not found" });
+        }
+
+        // Vrati komentare iz product objekta (već imaš with: { comments: ... } u queries)
+        res.status(200).json(product.comments);
+    } catch (error) {
+        console.error("Error fetching comments:", error);
+        res.status(500).json({ error: "Failed to fetch comments" });
     }
 };
