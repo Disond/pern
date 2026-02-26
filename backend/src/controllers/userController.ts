@@ -8,14 +8,15 @@ const syncUserSchema = z.object({
     imageUrl: z.string().url({ message: "Invalid URL" }).optional(),
 });
 
-const getUserId = (req: Request): string | undefined => {
-    return req.user?.id;
-};
+const updateUserSchema = z.object({
+    name: z.string().min(1).optional(),
+    imageUrl: z.string().url().optional(),
+});
 
 // GET /api/users/me
 export async function getMe(req: Request, res: Response) {
     try {
-        const userId = getUserId(req);
+        const userId = req.user?.id;
         if (!userId) return res.status(401).json({ error: "Unauthorized" });
 
         const user = await queries.getUserById(userId);
@@ -30,18 +31,17 @@ export async function getMe(req: Request, res: Response) {
 
 // POST /api/users/sync - sync user posle login-a
 export async function syncUser(req: Request, res: Response) {
-    const parsed = syncUserSchema.safeParse(req.body);
-    if (!parsed.success) {
-        return res.status(400).json({ error: parsed.error.flatten() });
-    }
     try {
-        const userId = getUserId(req);
+        const userId = req.user?.id;
         if (!userId) return res.status(401).json({ error: "Unauthorized" });
 
-        const { email, name, imageUrl } = req.body;
-        if (!email || !name) {
-            return res.status(400).json({ error: "Email and name required" });
+        // ✅ Validacija i korištenje parsed.data
+        const parsed = syncUserSchema.safeParse(req.body);
+        if (!parsed.success) {
+            return res.status(400).json({ error: parsed.error.flatten() });
         }
+
+        const { email, name, imageUrl } = parsed.data;
 
         const user = await queries.upsertUser({
             id: userId,
@@ -60,10 +60,16 @@ export async function syncUser(req: Request, res: Response) {
 // PUT /api/users/me
 export async function updateMe(req: Request, res: Response) {
     try {
-        const userId = getUserId(req);
+        const userId = req.user?.id;
         if (!userId) return res.status(401).json({ error: "Unauthorized" });
 
-        const { name, imageUrl } = req.body;
+        // ✅ Validacija i korištenje parsed.data
+        const parsed = updateUserSchema.safeParse(req.body);
+        if (!parsed.success) {
+            return res.status(400).json({ error: parsed.error.flatten() });
+        }
+
+        const { name, imageUrl } = parsed.data;
         const user = await queries.updateUser(userId, { name, imageUrl });
 
         res.json(user);
