@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import * as queries from "../db/queries";
+import { AuthRequest } from "../types/auth";
 import { z } from "zod";
 
 const syncUserSchema = z.object({
@@ -14,7 +15,7 @@ const updateUserSchema = z.object({
 });
 
 // GET /api/users/me
-export async function getMe(req: Request, res: Response) {
+export async function getMe(req: AuthRequest, res: Response) {
     try {
         const userId = req.user?.id;
         if (!userId) return res.status(401).json({ error: "Unauthorized" });
@@ -30,7 +31,7 @@ export async function getMe(req: Request, res: Response) {
 }
 
 // POST /api/users/sync - sync user posle login-a
-export async function syncUser(req: Request, res: Response) {
+export async function syncUser(req: AuthRequest, res: Response) {
     try {
         const userId = req.user?.id;
         if (!userId) return res.status(401).json({ error: "Unauthorized" });
@@ -58,7 +59,7 @@ export async function syncUser(req: Request, res: Response) {
 }
 
 // PUT /api/users/me
-export async function updateMe(req: Request, res: Response) {
+export async function updateMe(req: AuthRequest, res: Response) {
     try {
         const userId = req.user?.id;
         if (!userId) return res.status(401).json({ error: "Unauthorized" });

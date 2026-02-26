@@ -1,12 +1,13 @@
 import type { Request, Response } from "express";
 import * as queries from "../db/queries";
+import { AuthRequest } from "../types/auth";
 import { z } from "zod";
 
 const createCommentSchema = z.object({
     content: z.string().min(1, { message: "Content is required" }),
 });
 
-export const createComment = async (req: Request, res: Response) => {
+export const createComment = async (req: AuthRequest, res: Response) => {
     try {
         const userId = req.user?.id;
         if (!userId) return res.status(401).json({ error: "Unauthorized" });
@@ -38,7 +39,7 @@ export const createComment = async (req: Request, res: Response) => {
     }
 };
 
-export const deleteComment = async (req: Request, res: Response) => {
+export const deleteComment = async (req: AuthRequest, res: Response) => {
     try {
         const userId = req.user?.id;
         if (!userId) return res.status(401).json({ error: "Unauthorized" });
@@ -62,7 +63,10 @@ export const deleteComment = async (req: Request, res: Response) => {
     }
 };
 
-export const getCommentsByProductId = async (req: Request, res: Response) => {
+export const getCommentsByProductId = async (
+    req: AuthRequest,
+    res: Response,
+) => {
     try {
         const productId = req.params.productId as string;
 

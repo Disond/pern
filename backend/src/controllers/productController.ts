@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import * as queries from "../db/queries";
+import { AuthRequest } from "../types/auth";
 
 export const getAllProducts = async (req: Request, res: Response) => {
     try {
@@ -11,7 +12,7 @@ export const getAllProducts = async (req: Request, res: Response) => {
     }
 };
 
-export const getMyProducts = async (req: Request, res: Response) => {
+export const getMyProducts = async (req: AuthRequest, res: Response) => {
     try {
         const userId = req.user?.id;
         if (!userId) return res.status(401).json({ error: "Unauthorized" });
@@ -24,7 +25,7 @@ export const getMyProducts = async (req: Request, res: Response) => {
     }
 };
 
-export const getProductById = async (req: Request, res: Response) => {
+export const getProductById = async (req: AuthRequest, res: Response) => {
     try {
         const id = req.params.id as string;
         const product = await queries.getProductById(id);
@@ -37,7 +38,7 @@ export const getProductById = async (req: Request, res: Response) => {
     }
 };
 
-export const createProduct = async (req: Request, res: Response) => {
+export const createProduct = async (req: AuthRequest, res: Response) => {
     try {
         const userId = req.user?.id;
         if (!userId) return res.status(401).json({ error: "Unauthorized" });
@@ -63,7 +64,7 @@ export const createProduct = async (req: Request, res: Response) => {
     }
 };
 
-export const updateProduct = async (req: Request, res: Response) => {
+export const updateProduct = async (req: AuthRequest, res: Response) => {
     try {
         const userId = req.user?.id;
         if (!userId) return res.status(401).json({ error: "Unauthorized" });
@@ -94,7 +95,7 @@ export const updateProduct = async (req: Request, res: Response) => {
     }
 };
 
-export const deleteProduct = async (req: Request, res: Response) => {
+export const deleteProduct = async (req: AuthRequest, res: Response) => {
     try {
         const userId = req.user?.id;
         if (!userId) return res.status(401).json({ error: "Unauthorized" });
