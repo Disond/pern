@@ -2,7 +2,6 @@ import express from "express";
 import cors from "cors";
 import path from "path";
 import { toNodeHandler } from "better-auth/node";
-// @coderabbitai please review this specific change in the context of the previous commit.
 
 import { ENV } from "./config/env";
 import { auth } from "./auth";
